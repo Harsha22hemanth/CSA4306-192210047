@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Booking with Autocomplete</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: url('http://ts1.mm.bing.net/th?id=OIP.KlFFlHcy3lD2_L-HvsM2NQHaE8&pid=15.1') no-repeat center center fixed;
+            background-size: cover;
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .booking-container {
+            background-color: rgba(255, 255, 255, 0.9);
+            color: black;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 1000px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .search-box {
+            display: flex;
+            justify-content: space-between;
+            background-color: #F4F4F4;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .search-box input,
+        .search-box select {
+            padding: 15px;
+            border: none;
+            border-radius: 5px;
+            width: 30%;
+        }
+
+        .autocomplete-items {
+            position: absolute;
+            border: 1px solid #d4d4d4;
+            border-bottom: none;
+            border-top: none;
+            z-index: 99;
+            top: 80px;
+            left: 0;
+            right: 0;
+            background-color: white;
+        }
+
+        .autocomplete-items div {
+            padding: 10px;
+            cursor: pointer;
+            background-color: #fff;
+            border-bottom: 1px solid #d4d4d4;
+        }
+
+        .autocomplete-items div:hover {
+            background-color: #e9e9e9;
+        }
+
+        .search-box button {
+            background-color: #0071c2;
+            color: white;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .search-box button:hover {
+            background-color: #005e9e;
+        }
+
+        .message {
+            margin-top: 10px;
+            color: red; /* Change color for not found message */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="booking-container">
+        <div class="header">
+            <h1>Find your next stay</h1>
+            <p>Search low prices on hotels, homes, and much more...</p>
+        </div>
+
+        <div class="search-box">
+            <input id="destination" type="text" placeholder="Where are you going?" oninput="showSuggestions(this.value)" />
+            <input type="date" placeholder="Check-in date" />
+            <input type="date" placeholder="Check-out date" />
+            <button onclick="checkAvailability()">Search</button>
+        </div>
+        <div id="autocomplete-list" class="autocomplete-items"></div>
+        <div id="availability-message" class="message"></div>
+
+    </div>
+
+    <script>
+        const places = [
+            "Mumbai", "Delhi", "Bangalore", "Hyderabad", "Ahmedabad", 
+            "Chennai", "Kolkata", "Pune", "Jaipur", "Surat"
+        ];
+
+        function showSuggestions(value) {
+            const autocompleteList = document.getElementById('autocomplete-list');
+            autocompleteList.innerHTML = ''; // Clear previous suggestions
+            if (!value) return; // Exit if the input is empty
+
+            const filteredPlaces = places.filter(place => place.toLowerCase().startsWith(value.toLowerCase()));
+
+            filteredPlaces.forEach(place => {
+                const suggestionItem = document.createElement('div');
+                suggestionItem.innerText = place;
+                suggestionItem.onclick = function() {
+                    document.getElementById('destination').value = place; // Set input value
+                    autocompleteList.innerHTML = ''; // Clear suggestions
+                };
+                autocompleteList.appendChild(suggestionItem);
+            });
+        }
+
+        function checkAvailability() {
+            const destination = document.getElementById('destination').value;
+            const availabilityMessage = document.getElementById('availability-message');
+            if (places.includes(destination)) {
+                availabilityMessage.innerText = "Available";
+                availabilityMessage.style.color = "green"; // Change color to green for available
+            } else {
+                availabilityMessage.innerText = "Not Found";
+                availabilityMessage.style.color = "red"; // Change color to red for not found
+            }
+        }
+
+        document.addEventListener('click', function(e) {
+            const autocompleteList = document.getElementById('autocomplete-list');
+            if (!e.target.closest('#destination')) {
+                autocompleteList.innerHTML = '';
+            }
+        });
+    </script>
+
+</body>
+</html>
